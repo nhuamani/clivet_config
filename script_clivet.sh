@@ -18,6 +18,7 @@ mkdir -p /var/www/$PROJECT/$PROJECT/temp/logs
 chown $USER /var/www/$PROJECT/
 cd /var/www/$PROJECT/
 su - $USER
+#write this comands https://github.com/yuselenin/clivet_config/blob/master/configutation_in_user.sh
 chown -R $USER:webapps /var/www/$PROJECT
 chmod -R g+w /var/www/$PROJECT
 echo "=============Gunicorn============"
