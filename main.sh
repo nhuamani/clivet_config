@@ -1,4 +1,3 @@
-#!/bin/bash
 echo "Iniciando $NAME como `whoami`"
 #================================================================================
 PROJECT='clivet'
@@ -7,32 +6,26 @@ USER='clivet_user'
 #================================================================================
 apt update
 apt upgrade
-apt-get install zsh
-sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Users"
+echo "=============Users============"
 groupadd --system webapps
 useradd --system --gid webapps --shell /bin/bash --home /var/www/$PROJECT $USER
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Virtual env"
+echo "=============Virtual============"
 apt install python-virtualenv
-mkdir -p /var/www/
-cd /var/www/
+mkdir -p /var/www/$PROJECT
+cd /var/www/$PROJECT
 git clone $GIT_REP $PROJECT
+mkdir -p /var/www/$PROJECT/$PROJECT/temp/logs
 chown $USER /var/www/$PROJECT/
-
-su - $USER
 cd /var/www/$PROJECT/
-virtualenv .
-source bin/activate
-pip install -r requirements.txt
-pip install gunicorn
-su - root
+su -c 'sh user.sh' $USER
 chown -R $USER:users /var/www/$PROJECT
 chmod -R g+w /var/www/$PROJECT
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Gunicorn"
+echo "=============Gunicorn============"
 cd /var/www/$PROJECT
-wget https://raw.githubusercontent.com/yuselenin/clivet_config/master/gunicorn_start -P /var/www/$PROJECT/bin/
+chown -R $USER:users /var/www/$PROJECT
 chmod u+x bin/gunicorn_start
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>supervisor"
+wget https://raw.githubusercontent.com/yuselenin/clivet_config/master/gunicorn_start -P /var/www/$PROJECT/bin/
+echo "=============supervisor============"
 apt install supervisor
 wget https://raw.githubusercontent.com/yuselenin/clivet_config/master/clivet.conf -P /etc/supervisor/conf.d/
 mkdir -p /var/www/$PROJECT/logs/
@@ -40,10 +33,11 @@ touch /var/www/$PROJECT/logs/gunicorn_supervisor.log
 supervisorctl reread
 supervisorctl update
 supervisorctl status $PROJECT
-#supervisorctl restart $PROJECT 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>nginx"
+# supervisorctl restart $PROJECT 
+echo "=============nginx============"
 apt install nginx
+echo "STATUS"
 service nginx start
 wget https://raw.githubusercontent.com/yuselenin/clivet_config/master/clivet -P /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/$PROJECT /etc/nginx/sites-enabled/$PROJECT
-service nginx restart
+
