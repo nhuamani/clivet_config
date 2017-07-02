@@ -1,7 +1,7 @@
 echo "Iniciando $NAME como `whoami`"
 #================================================================================
 PROJECT='clivet_page'
-GIT_REP='https://gitlab.com/wannabe/CLIVET.git'
+GIT_REP='https://gitlab.com/wannabe/clivet_page.git'
 USER='clivet_page_user'
 #================================================================================
 # apt update
