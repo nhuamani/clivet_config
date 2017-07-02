@@ -17,8 +17,8 @@ git clone $GIT_REP $PROJECT
 mkdir -p /var/www/$PROJECT/$PROJECT/temp/logs
 chown $USER /var/www/$PROJECT/
 cd /var/www/$PROJECT/
-su -c 'sh user.sh' $USER
-chown -R $USER:users /var/www/$PROJECT
+su - $USER
+chown -R $USER:webapps /var/www/$PROJECT
 chmod -R g+w /var/www/$PROJECT
 echo "=============Gunicorn============"
 cd /var/www/$PROJECT
@@ -30,6 +30,7 @@ apt install supervisor
 wget https://raw.githubusercontent.com/yuselenin/clivet_config/master/clivet.conf -P /etc/supervisor/conf.d/
 mkdir -p /var/www/$PROJECT/logs/
 touch /var/www/$PROJECT/logs/gunicorn_supervisor.log 
+chown -R $USER:webapps /var/www/$PROJECT
 supervisorctl reread
 supervisorctl update
 supervisorctl status $PROJECT
@@ -40,4 +41,4 @@ echo "STATUS"
 service nginx start
 wget https://raw.githubusercontent.com/yuselenin/clivet_config/master/clivet -P /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/$PROJECT /etc/nginx/sites-enabled/$PROJECT
-
+service nginx restart
